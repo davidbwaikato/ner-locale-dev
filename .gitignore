@@ -12,3 +12,5 @@ prog-langs/python3-for-glner/
 # Temporary extraction/download state.
 prog-langs/.tmp-*/
 prog-langs/downloads/*.part
+
+OBSOLETE/
