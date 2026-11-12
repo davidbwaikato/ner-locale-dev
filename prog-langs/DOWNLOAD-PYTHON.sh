@@ -5,11 +5,11 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 source "$SCRIPT_DIR/_common.bash"
 
 archive_name=$(python_archive_name)
-archive="$GLNER_DOWNLOAD_DIR/$archive_name"
-url="https://github.com/astral-sh/python-build-standalone/releases/download/${GLNER_PYTHON_BUILD_RELEASE}/${archive_name}"
+archive="$NER_LOCALE_DOWNLOAD_DIR/$archive_name"
+url="https://github.com/astral-sh/python-build-standalone/releases/download/${NER_LOCALE_PYTHON_BUILD_RELEASE}/${archive_name}"
 
 if [ "${1:-}" = "--dry-run" ]; then
-    echo "Python $GLNER_PYTHON_VERSION"
+    echo "Python $NER_LOCALE_PYTHON_VERSION"
     echo "URL:   $url"
     echo "Cache: $archive"
     exit 0

@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# Shared helpers for the glner-dev provisioning scripts.
+# Shared helpers for the ner-locale-dev provisioning scripts.
 
 set -o pipefail
 
-GLNER_PROG_LANGS_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
-GLNER_DEV_ROOT=$(cd -- "$GLNER_PROG_LANGS_DIR/.." && pwd -P)
+NER_LOCALE_PROG_LANGS_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+NER_LOCALE_DEV_ROOT=$(cd -- "$NER_LOCALE_PROG_LANGS_DIR/.." && pwd -P)
 # shellcheck source=../versions.env
-source "$GLNER_DEV_ROOT/versions.env"
+source "$NER_LOCALE_DEV_ROOT/versions.env"
 
-GLNER_DOWNLOAD_DIR="$GLNER_PROG_LANGS_DIR/downloads"
-GLNER_INSTALL_DIR="$GLNER_PROG_LANGS_DIR/installed"
-GLNER_PYTHON_VENV_DIR="$GLNER_PROG_LANGS_DIR/$GLNER_PYTHON_VENV_NAME"
+NER_LOCALE_DOWNLOAD_DIR="$NER_LOCALE_PROG_LANGS_DIR/downloads"
+NER_LOCALE_INSTALL_DIR="$NER_LOCALE_PROG_LANGS_DIR/installed"
+NER_LOCALE_PYTHON_VENV_DIR="$NER_LOCALE_PROG_LANGS_DIR/$NER_LOCALE_PYTHON_VENV_NAME"
 
-mkdir -p "$GLNER_DOWNLOAD_DIR" "$GLNER_INSTALL_DIR"
+mkdir -p "$NER_LOCALE_DOWNLOAD_DIR" "$NER_LOCALE_INSTALL_DIR"
 
 fail() {
     echo "ERROR: $*" >&2
@@ -24,8 +24,8 @@ have_command() {
 }
 
 detect_os() {
-    if [ -n "${GLNER_DEV_OS_OVERRIDE:-}" ]; then
-        printf '%s\n' "$GLNER_DEV_OS_OVERRIDE"
+    if [ -n "${NER_LOCALE_DEV_OS_OVERRIDE:-}" ]; then
+        printf '%s\n' "$NER_LOCALE_DEV_OS_OVERRIDE"
         return
     fi
     case "$(uname -s 2>/dev/null || true)" in
@@ -37,8 +37,8 @@ detect_os() {
 }
 
 detect_arch() {
-    if [ -n "${GLNER_DEV_ARCH_OVERRIDE:-}" ]; then
-        printf '%s\n' "$GLNER_DEV_ARCH_OVERRIDE"
+    if [ -n "${NER_LOCALE_DEV_ARCH_OVERRIDE:-}" ]; then
+        printf '%s\n' "$NER_LOCALE_DEV_ARCH_OVERRIDE"
         return
     fi
     case "$(uname -m 2>/dev/null || true)" in
@@ -113,8 +113,8 @@ version_lt() {
 }
 
 linux_libc_kind() {
-    if [ -n "${GLNER_DEV_LIBC_OVERRIDE:-}" ]; then
-        printf '%s\n' "$GLNER_DEV_LIBC_OVERRIDE"
+    if [ -n "${NER_LOCALE_DEV_LIBC_OVERRIDE:-}" ]; then
+        printf '%s\n' "$NER_LOCALE_DEV_LIBC_OVERRIDE"
         return
     fi
     if ldd /bin/sh 2>&1 | grep -qi musl; then
@@ -125,8 +125,8 @@ linux_libc_kind() {
 }
 
 linux_glibc_version() {
-    if [ -n "${GLNER_DEV_GLIBC_OVERRIDE:-}" ]; then
-        printf '%s\n' "$GLNER_DEV_GLIBC_OVERRIDE"
+    if [ -n "${NER_LOCALE_DEV_GLIBC_OVERRIDE:-}" ]; then
+        printf '%s\n' "$NER_LOCALE_DEV_GLIBC_OVERRIDE"
         return
     fi
     if have_command getconf; then
@@ -153,12 +153,12 @@ python_target_triple() {
 python_archive_name() {
     target=$(python_target_triple) || return 1
     printf 'cpython-%s+%s-%s-install_only_stripped.tar.gz\n' \
-        "$GLNER_PYTHON_VERSION" "$GLNER_PYTHON_BUILD_RELEASE" "$target"
+        "$NER_LOCALE_PYTHON_VERSION" "$NER_LOCALE_PYTHON_BUILD_RELEASE" "$target"
 }
 
 python_install_path() {
     target=$(python_target_triple) || return 1
-    printf '%s/python-%s-%s\n' "$GLNER_INSTALL_DIR" "$GLNER_PYTHON_VERSION" "$target"
+    printf '%s/python-%s-%s\n' "$NER_LOCALE_INSTALL_DIR" "$NER_LOCALE_PYTHON_VERSION" "$target"
 }
 
 python_base_executable() {
@@ -174,18 +174,18 @@ python_base_executable() {
 python_venv_executable() {
     os=$(detect_os) || return 1
     if [ "$os" = windows ]; then
-        printf '%s/Scripts/python.exe\n' "$GLNER_PYTHON_VENV_DIR"
+        printf '%s/Scripts/python.exe\n' "$NER_LOCALE_PYTHON_VENV_DIR"
     else
-        printf '%s/bin/python\n' "$GLNER_PYTHON_VENV_DIR"
+        printf '%s/bin/python\n' "$NER_LOCALE_PYTHON_VENV_DIR"
     fi
 }
 
 python_venv_activate() {
     os=$(detect_os) || return 1
     if [ "$os" = windows ]; then
-        printf '%s/Scripts/activate\n' "$GLNER_PYTHON_VENV_DIR"
+        printf '%s/Scripts/activate\n' "$NER_LOCALE_PYTHON_VENV_DIR"
     else
-        printf '%s/bin/activate\n' "$GLNER_PYTHON_VENV_DIR"
+        printf '%s/bin/activate\n' "$NER_LOCALE_PYTHON_VENV_DIR"
     fi
 }
 
@@ -206,7 +206,7 @@ node_platform() {
                 glibc=$(linux_glibc_version)
                 if [ -n "$glibc" ] && version_lt "$glibc" 2.28; then
                     # Node 22 still has an unofficial glibc 2.17 build. This is
-                    # why glner-dev pins Node 22 instead of Node 24.
+                    # why ner-locale-dev pins Node 22 instead of Node 24.
                     printf '%s|%s|%s\n' unofficial linux-x64-glibc-217 tar.gz
                 else
                     printf '%s|%s|%s\n' official linux-x64 tar.gz
@@ -220,7 +220,7 @@ node_platform() {
             else
                 glibc=$(linux_glibc_version)
                 if [ -n "$glibc" ] && version_lt "$glibc" 2.28; then
-                    fail "Node $GLNER_NODE_VERSION has no glibc-2.17 ARM64 build in the supported mapping"
+                    fail "Node $NER_LOCALE_NODE_VERSION has no glibc-2.17 ARM64 build in the supported mapping"
                 fi
                 printf '%s|%s|%s\n' official linux-arm64 tar.gz
             fi
@@ -233,23 +233,23 @@ node_archive_name() {
     platform=$(node_platform) || return 1
     tag=$(printf '%s' "$platform" | cut -d'|' -f2)
     ext=$(printf '%s' "$platform" | cut -d'|' -f3)
-    printf 'node-v%s-%s.%s\n' "$GLNER_NODE_VERSION" "$tag" "$ext"
+    printf 'node-v%s-%s.%s\n' "$NER_LOCALE_NODE_VERSION" "$tag" "$ext"
 }
 
 node_download_base() {
     platform=$(node_platform) || return 1
     source=$(printf '%s' "$platform" | cut -d'|' -f1)
     if [ "$source" = official ]; then
-        printf 'https://nodejs.org/dist/v%s\n' "$GLNER_NODE_VERSION"
+        printf 'https://nodejs.org/dist/v%s\n' "$NER_LOCALE_NODE_VERSION"
     else
-        printf 'https://unofficial-builds.nodejs.org/download/release/v%s\n' "$GLNER_NODE_VERSION"
+        printf 'https://unofficial-builds.nodejs.org/download/release/v%s\n' "$NER_LOCALE_NODE_VERSION"
     fi
 }
 
 node_install_path() {
     platform=$(node_platform) || return 1
     tag=$(printf '%s' "$platform" | cut -d'|' -f2)
-    printf '%s/node-%s-%s\n' "$GLNER_INSTALL_DIR" "$GLNER_NODE_VERSION" "$tag"
+    printf '%s/node-%s-%s\n' "$NER_LOCALE_INSTALL_DIR" "$NER_LOCALE_NODE_VERSION" "$tag"
 }
 
 node_executable() {

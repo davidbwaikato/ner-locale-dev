@@ -1,14 +1,14 @@
-# glner-dev
+# ner-locale-dev
 
-Portable development-language provisioning for `glner-workbench`.
+Portable development-language provisioning for `ner-locale-workbench`.
 
 This repository is intended to be checked out as the `dev/` Git submodule of the
-main GLNER Workbench repository. It follows the same general pattern as the
+main NER Locale Workbench repository. It follows the same general pattern as the
 `zork-dev` and `malleable-ebook-dev` helper repositories: pinned language
 runtimes live below `prog-langs/`, downloads and expanded installations are
 project-local, and no administrator/root access is required.
 
-There is deliberately no `cli-tools/` directory at present because the GLNER
+There is deliberately no `cli-tools/` directory at present because the NER Locale
 Workbench does not currently need a separately provisioned CLI toolchain.
 
 ## Pinned versions
@@ -17,7 +17,7 @@ Workbench does not currently need a separately provisioned CLI toolchain.
   **20260901** (`install_only_stripped`).
 - Node.js **22.23.2**.
 
-Python 3.12 satisfies the workbench's current `requires-python >=3.11` setting
+Python 3.12 satisfies the workbench's current `requires-python >=3.12` setting
 and provides the runtime required by the planned Lingua-based language
 identification stage.
 
@@ -31,11 +31,11 @@ Node.js distribution.
 ## Repository layout
 
 ```text
-glner-dev/
+ner-locale-dev/
 ├── README.md
 ├── versions.env
 ├── DOWNLOAD-DEV-TOOLS-ALL.sh
-├── GET-DEV-TOOLS-ALL.sh
+├── INSTALL-DEV-TOOLS-ALL.sh
 ├── SETUP.bash
 └── prog-langs/
     ├── _common.bash
@@ -47,15 +47,15 @@ glner-dev/
     ├── ACTIVATE-NODEJS.bash
     ├── downloads/             # cached archives; gitignored
     ├── installed/             # expanded runtimes; gitignored
-    └── python3-for-glner/     # project virtualenv; gitignored
+    └── python3-for-ner-locale/     # project virtualenv; gitignored
 ```
 
-## Add to `glner-workbench`
+## Add to `ner-locale-workbench`
 
 From the root of the main repository:
 
 ```bash
-git submodule add https://github.com/davidbwaikato/glner-dev.git dev
+git submodule add https://github.com/davidbwaikato/ner-locale-dev.git dev
 git submodule update --init --recursive
 ```
 
@@ -67,10 +67,10 @@ git submodule update --init --recursive
 
 ## First-time setup
 
-From the `glner-workbench` root:
+From the `ner-locale-workbench` root:
 
 ```bash
-./dev/GET-DEV-TOOLS-ALL.sh
+./dev/INSTALL-DEV-TOOLS-ALL.sh
 source ./dev/SETUP.bash
 ```
 
@@ -83,13 +83,30 @@ npm --version
 ```
 
 The prompt will normally show the Python virtual environment name
-`python3-for-glner` after activation.
+`python3-for-ner-locale` after activation.
 
 `SETUP.bash` is safe to source repeatedly in the same shell. If the expected
-`python3-for-glner` virtual environment is already active, it is left in place rather
-than being activated again. If a different virtual environment is active, the GLNER
+`python3-for-ner-locale` virtual environment is already active, it is left in place rather
+than being activated again. If a different virtual environment is active, the NER Locale
 environment is activated in its place. The Node.js runtime directory is likewise added
 to `PATH` only once.
+
+### Recreate the environment after the project rename
+
+The environment now lives at `dev/prog-langs/python3-for-ner-locale`.
+From the workbench root in a fresh login shell, remove the old environment
+and rerun the installer:
+
+```bash
+rm -rf -- dev/prog-langs/python3-for-glner
+./INSTALL-AND-CONFIGURE-DEV.sh
+source ./SETUP.bash
+```
+
+The old path above is only a cleanup target. New installs and activations use
+`python3-for-ner-locale`. The installer reuses cached archives and matching
+portable Python/Node installations. Reinstall the workbench dependencies in
+the new environment with `./BUILD-PYTHON-WORKBENCH.sh`.
 
 ### Download without installing
 
@@ -106,7 +123,7 @@ dev/prog-langs/downloads/
 ```
 
 Subsequent runs reuse them. This also makes it straightforward to preserve a
-particular binary distribution in the `glner-dev` Git repository if desired.
+particular binary distribution in the `ner-locale-dev` Git repository if desired.
 The directory is ignored by default; explicitly add a chosen archive with
 `git add -f` if you decide to preserve it in Git.
 
@@ -118,9 +135,9 @@ No files are downloaded with:
 ./dev/DOWNLOAD-DEV-TOOLS-ALL.sh --dry-run
 ```
 
-## Installing GLNER Workbench dependencies
+## Installing NER Locale Workbench dependencies
 
-After activating the environment, install whichever GLNER extras are needed.
+After activating the environment, install whichever NER Locale extras are needed.
 For the current web annotator and Papers Past browser transport, for example:
 
 ```bash
@@ -163,9 +180,9 @@ For Node.js:
 On Windows, `.zip` extraction uses `unzip` when available and falls back to
 PowerShell `Expand-Archive` under Git Bash.
 
-For troubleshooting or reproducible platform tests, `GLNER_DEV_OS_OVERRIDE`,
-`GLNER_DEV_ARCH_OVERRIDE`, `GLNER_DEV_LIBC_OVERRIDE`, and
-`GLNER_DEV_GLIBC_OVERRIDE` can override auto-detection.
+For troubleshooting or reproducible platform tests, `NER_LOCALE_DEV_OS_OVERRIDE`,
+`NER_LOCALE_DEV_ARCH_OVERRIDE`, `NER_LOCALE_DEV_LIBC_OVERRIDE`, and
+`NER_LOCALE_DEV_GLIBC_OVERRIDE` can override auto-detection.
 
 ## Caching / idempotence
 
@@ -173,7 +190,7 @@ The setup is deliberately restartable:
 
 - a valid cached Python archive is not downloaded again;
 - a matching expanded Python runtime is not unpacked again;
-- an existing `python3-for-glner` virtualenv using the pinned Python is reused;
+- an existing `python3-for-ner-locale` virtualenv using the pinned Python is reused;
 - a cached Node archive and checksum manifest are reused;
 - a matching Node installation is reused.
 

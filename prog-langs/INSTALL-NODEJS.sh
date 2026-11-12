@@ -5,18 +5,18 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 source "$SCRIPT_DIR/_common.bash"
 
 "$SCRIPT_DIR/DOWNLOAD-NODEJS.sh"
-archive="$GLNER_DOWNLOAD_DIR/$(node_archive_name)"
+archive="$NER_LOCALE_DOWNLOAD_DIR/$(node_archive_name)"
 install=$(node_install_path)
 node_exe=$(node_executable)
 platform=$(node_platform)
 tag=$(printf '%s' "$platform" | cut -d'|' -f2)
 ext=$(printf '%s' "$platform" | cut -d'|' -f3)
-top="node-v${GLNER_NODE_VERSION}-${tag}"
+top="node-v${NER_LOCALE_NODE_VERSION}-${tag}"
 
 node_matches() {
     [ -x "$node_exe" ] || return 1
-    version=$($node_exe --version 2>/dev/null || true)
-    [ "$version" = "v$GLNER_NODE_VERSION" ]
+    version=$("$node_exe" --version 2>/dev/null || true)
+    [ "$version" = "v$NER_LOCALE_NODE_VERSION" ]
 }
 
 if node_matches; then
@@ -25,8 +25,8 @@ if node_matches; then
     exit 0
 fi
 
-echo "Installing Node.js $GLNER_NODE_VERSION"
-tmp="$GLNER_PROG_LANGS_DIR/.tmp-node-$$"
+echo "Installing Node.js $NER_LOCALE_NODE_VERSION"
+tmp="$NER_LOCALE_PROG_LANGS_DIR/.tmp-node-$$"
 rm -rf "$tmp"
 mkdir -p "$tmp"
 trap 'rm -rf "$tmp"' EXIT
@@ -57,7 +57,7 @@ rm -rf "$tmp"
 trap - EXIT
 
 node_exe=$(node_executable)
-node_matches || fail "Installed Node.js does not report v$GLNER_NODE_VERSION"
+node_matches || fail "Installed Node.js does not report v$NER_LOCALE_NODE_VERSION"
 
 echo "Installed Node.js:"
 echo "  $install"

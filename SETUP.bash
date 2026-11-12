@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Source this file from the glner-workbench root:
+# Source this file from the ner-locale-workbench root:
 #   source ./dev/SETUP.bash
 
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
@@ -12,21 +12,21 @@ fi
 # to locate themselves; using the generic name SCRIPT_DIR in all of them means
 # that a child script can overwrite the parent's value because sourced scripts
 # run in the same shell.
-_GLNER_SETUP_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+_NER_LOCALE_SETUP_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 
 # shellcheck source=prog-langs/ACTIVATE-PYTHON.bash
-source "$_GLNER_SETUP_DIR/prog-langs/ACTIVATE-PYTHON.bash" || {
-    unset _GLNER_SETUP_DIR
+source "$_NER_LOCALE_SETUP_DIR/prog-langs/ACTIVATE-PYTHON.bash" || {
+    unset _NER_LOCALE_SETUP_DIR
     return 1
 }
 
 # shellcheck source=prog-langs/ACTIVATE-NODEJS.bash
-source "$_GLNER_SETUP_DIR/prog-langs/ACTIVATE-NODEJS.bash" || {
-    unset _GLNER_SETUP_DIR
+source "$_NER_LOCALE_SETUP_DIR/prog-langs/ACTIVATE-NODEJS.bash" || {
+    unset _NER_LOCALE_SETUP_DIR
     return 1
 }
 
-export GLNER_DEV_ROOT="$_GLNER_SETUP_DIR"
-unset _GLNER_SETUP_DIR
+export NER_LOCALE_DEV_ROOT="$_NER_LOCALE_SETUP_DIR"
+unset _NER_LOCALE_SETUP_DIR
 
-echo "GLNER development environment activated."
+echo "NER Locale development environment activated."
