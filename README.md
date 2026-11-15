@@ -2,6 +2,10 @@
 
 Portable development-language provisioning for `ner-locale-workbench`.
 
+When installed as the workbench's `dev/` submodule, the existing Python
+installer also installs its GLiNER, GLiNER2 and local computation-measurement
+extras. Package versions are declared by the main workbench's `pyproject.toml`.
+
 This repository is intended to be checked out as the `dev/` Git submodule of the
 main NER Locale Workbench repository. It follows the same general pattern as the
 `zork-dev` and `malleable-ebook-dev` helper repositories: pinned language
@@ -67,7 +71,9 @@ git submodule update --init --recursive
 
 ## First-time setup
 
-From the `ner-locale-workbench` root:
+Apply the workbench's GLiNER/telemetry update first so that `pyproject.toml`
+declares the `gliner`, `gliner2` and `telemetry` extras. Then run from the
+`ner-locale-workbench` root:
 
 ```bash
 ./dev/INSTALL-DEV-TOOLS-ALL.sh
@@ -137,8 +143,34 @@ No files are downloaded with:
 
 ## Installing NER Locale Workbench dependencies
 
-After activating the environment, install whichever NER Locale extras are needed.
-For the current web annotator and Papers Past browser transport, for example:
+`prog-langs/INSTALL-PYTHON.sh` creates or reuses the environment, then installs
+the parent workbench in editable mode with `.[gliner,gliner2,telemetry]`. This
+includes GLiNER2's local-inference dependencies and `psutil` for RAM sampling.
+It runs in the workbench directory and uses a relative requirement, avoiding
+the `/c/...` editable-path problem with Windows pip under Git Bash. No separate
+incremental-update installer is needed.
+
+To update just Python and these packages in an existing checkout, run from the
+workbench root:
+
+```bash
+bash ./dev/prog-langs/INSTALL-PYTHON.sh
+source ./SETUP.bash
+python -m pip check
+```
+
+This reuses the pinned runtime and environment when they already match. Model
+weights are downloaded when first selected for an experiment, rather than by
+this installer. If `ner-locale-dev` is checked out on its own without a parent
+`pyproject.toml`, it provisions the runtime and skips workbench packages.
+
+For the complete application, continue to use the workbench's existing
+`./BUILD-PYTHON-WORKBENCH.sh`, which installs `.[all,dev]` and the existing
+model/browser resources. The `all` extra includes the new NER tools too.
+
+After activating the environment, other combinations of workbench extras can
+also be installed directly. For the web annotator and Papers Past browser
+transport, for example:
 
 ```bash
 python -m pip install -e ".[dev,annotator,paperspast-browser]"
