@@ -3,7 +3,7 @@
 Portable development-language provisioning for `ner-locale-workbench`.
 
 When installed as the workbench's `dev/` submodule, the existing Python
-installer also installs its GLiNER, GLiNER2 and local computation-measurement
+installer also installs its GLiNER, GLiNER2, local fine-tuning and computation-measurement
 extras. Package versions are declared by the main workbench's `pyproject.toml`.
 
 This repository is intended to be checked out as the `dev/` Git submodule of the
@@ -72,7 +72,7 @@ git submodule update --init --recursive
 ## First-time setup
 
 Apply the workbench's GLiNER/telemetry update first so that `pyproject.toml`
-declares the `gliner`, `gliner2` and `telemetry` extras. Then run from the
+declares the `gliner`, `gliner2`, `telemetry` and `training` extras. Then run from the
 `ner-locale-workbench` root:
 
 ```bash
@@ -144,8 +144,9 @@ No files are downloaded with:
 ## Installing NER Locale Workbench dependencies
 
 `prog-langs/INSTALL-PYTHON.sh` creates or reuses the environment, then installs
-the parent workbench in editable mode with `.[gliner,gliner2,telemetry]`. This
-includes GLiNER2's local-inference dependencies and `psutil` for RAM sampling.
+the parent workbench in editable mode with `.[gliner,gliner2,telemetry,training]`. This
+includes GLiNER2's local-inference dependencies, Accelerate for fine-tuning,
+and `psutil` for RAM sampling.
 It runs in the workbench directory and uses a relative requirement, avoiding
 the `/c/...` editable-path problem with Windows pip under Git Bash. No separate
 incremental-update installer is needed.
